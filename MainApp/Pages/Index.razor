@@ -1,0 +1,52 @@
+﻿@page "/"
+@using MainApp.DataModels
+@using MainApp.Repository.Interface
+@using Microsoft.EntityFrameworkCore
+
+@inject IDepartmentRepository repository
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+<button @onclick="AddDepartment"> Add Depatment</button>
+<button @onclick="UpdateDepartment"> Update Depatment</button>
+<button @onclick="GetDepartment"> Get Single Depatment</button>
+<button @onclick="GetAllDepartment"> Get All Depatment</button>
+<button @onclick="RemoveDepartment"> Remove Depatment</button>
+<br/>
+@message
+
+@code
+{
+    private string message = "";
+
+    private Department department = new();
+    private async  void AddDepartment()
+    {
+        department.Id = Guid.NewGuid();
+        department.Name = "This is from Repository";
+        department.IsNew = true;
+        message = $"Department = \"{department.Name}\"has been add {await repository.InsertOrUpdate(department)}`s";
+    }
+    private async void UpdateDepartment()
+    {
+        department.Name = "updated";
+        message = $"Department = \"{department.Name}\"has been Updated {await repository.InsertOrUpdate(department)}`s";
+    }
+    private async  void RemoveDepartment()
+    {
+        message = $"Department = \"{department.Name}\"has been Removed {await repository.Remove(department)}`s";
+    }
+    private async void GetDepartment()
+    {
+        message = $"Department Name = {(await repository.GetById(department.Id))?.Name}";
+    }
+    private async void GetAllDepartment()
+    {
+        message = $"Department  {(await repository.GetAll()).Count()}";
+    }
+}
